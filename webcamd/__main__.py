@@ -23,6 +23,7 @@ class CamHandler(BaseHTTPRequestHandler):
                 rc, img = capture.read()
                 if not rc:
                     continue
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # CV2 uses BGR by default :/
                 jpg = Image.fromarray(img)
                 tmpFile = BytesIO()
                 jpg.save(tmpFile, 'JPEG')
