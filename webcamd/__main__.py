@@ -60,6 +60,7 @@ def main():
                         help='Web camera pixel height (default: 1080)')
     parser.add_argument('--frame-rate', '--fps',
                         dest='fps',
+                        type=int,
                         default=60,
                         help='Frame rate of the webcam (default: 60)')
     parser.add_argument('--device',
