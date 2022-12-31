@@ -18,7 +18,9 @@ class CamHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type',
                          'multipart/x-mixed-replace; boundary=--jpgboundary')
         self.end_headers()
+
         while True:
+            time.sleep(1)
             try:
                 rc, img = capture.read()
                 if not rc:
@@ -32,7 +34,6 @@ class CamHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-length', str(sys.getsizeof(tmpFile)))
                 self.end_headers()
                 self.wfile.write(tmpFile.getvalue())
-                time.sleep(0.05)
             except KeyboardInterrupt | BrokenPipeError:
                 break
 
@@ -87,11 +88,13 @@ def main():
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
     capture.set(cv2.CAP_PROP_FPS, args.fps)
+    capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Don't keep old frames
 
     # Start the HTTP server
     try:
         server = ThreadedHTTPServer((args.host, args.port), CamHandler)
         print(f'Starting webcam server on http://{args.host}:{args.port}/')
+        print(f'This version of the webcamd limits fps to 1')
         server.serve_forever()
     except KeyboardInterrupt:
         print('Stopping server...')
